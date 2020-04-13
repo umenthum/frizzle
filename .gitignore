@@ -1,0 +1,11 @@
+core_obj_dir
+uart_obj_dir
+jtag_obj_dir
+obj_dir
+a.out
+test.bin
+debug_rom.hex
+core/*.sv
+core/*.v
+.gdb_history
+vlt_dump.vcd

@@ -1,0 +1,12 @@
+[submodule "debugger/jtag_vpi"]
+	path = debugger/jtag_vpi
+	url = git@github.com:umenthum/jtag_vpi.git
+[submodule "uart/wbuart32"]
+	path = uart/wbuart32
+	url = git@github.com:umenthum/wbuart32.git
+[submodule "debugger/riscv-dbg"]
+	path = debugger/riscv-dbg
+	url = git@github.com:umenthum/riscv-dbg.git
+[submodule "debugger/common_cells"]
+	path = debugger/common_cells
+	url = git@github.com:umenthum/common_cells.git
