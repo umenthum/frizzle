@@ -4,6 +4,12 @@ A RISC-V system simulator with VGA, UART, memory, and JTAG debugging, interconne
 
 ## Usage
 
+### Download
+
+`git clone git@github.com:umenthum/frizzle.git`
+`cd frizzle`
+`git submodule update`
+
 ### Compile
 
 `sim.sh examples/testvga.c [debug]`
@@ -27,8 +33,21 @@ To advance past a breakpoint in the test code (`asm ("ebreak");`)
 
 `(gdb) set $dpc += 4`
 
+To get something closer to raw keyboard/UART IO, create a pair of pseudo-terminals (pty):
+
+`socat -d -d pty,raw,echo=0 pty,raw,echo=0`
+
+This command takes your terminal hostage so in another terminal, run frizzle connected to one end of the new pty. socat will print out the names, suppose they are /dev/pts/3 and /dev/pts/4:
+
+`./obj_dir/Vfrizzle < /dev/pts/3 > /dev/pts/3`
+
+And in yet another terminal, attach to the other end with your terminal emulator of choice:
+
+`screen /dev/pts/4`
+
 ## Prerequisites
 
+* A RISC-V core! Frizzle was developed around a RISC-V core derived from the UIUC ECE411 course staff's solution to MP1 so I don't feel comfortable sharing it. Ideally the core should support handling debug and UART interrupt requests as well as a handful of related CSRs. You will likely need to modify core/core_tlm.h and core/core_tlm.cpp to work with your core.
 * Verilator
 * SystemC (need environment variables SYSTEMC_LIBDIR, SYSTEMC_INCLUDE, maybe also SYSTEMC)
 * RISC-V OpenOCD
