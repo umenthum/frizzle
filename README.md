@@ -12,7 +12,7 @@ A RISC-V system simulator with VGA, UART, memory, and JTAG debugging, interconne
 
 ### Compile
 
-`sim.sh examples/testvga.c [debug]`
+`./sim.sh examples/testvga.c [debug]`
 
 First argument to `sim.sh` is the C test code you want to compile to test.bin which is loaded into memory in main.cpp. The test is also available in elf format in a.out which can be loaded by GDB.
 
@@ -22,7 +22,7 @@ First argument to `sim.sh` is the C test code you want to compile to test.bin wh
 
 The sim will wait for an OpenOCD debugger to attach, so in another terminal:
 
-`openocd -f tcl/interface/jtag_vpi.cfg`
+`openocd -f $OPENOCD_ROOT/tcl/interface/jtag_vpi.cfg`
 
 To attach GDB (`(gdb) ` represents the GDB prompt)
 
@@ -53,6 +53,12 @@ And in yet another terminal, attach to the other end with your terminal emulator
 * RISC-V OpenOCD
 * RISC-V GNU tools (GCC, objcopy, objdump, GDB)
 * gtkmm-3.0, probably some other packages (sorry I haven't tried running on a blank system to know exactly what is needed)
+* You will need to add the following to $OPENOCD_ROOT/tcl/interface/jtag_vpi.cfg (device ID can be configured in debugger/top.sv):
+
+`jtag newtap riscv cpu -irlen 5 -expected-id 0xA0ECE411`
+`target create riscv.cpu riscv -chain-position riscv.cpu`
+`riscv.cpu configure -work-area-phys 0x80000000 -work-area-size 10000 -work-area-backup 1`
+
 
 ## Feature Wishlist
 
@@ -69,6 +75,8 @@ And in yet another terminal, attach to the other end with your terminal emulator
 * Some sort of integration or interoperability with FuseSoC and/or Litex (imagine this might just be "add SystemC/TLM mode to Litex" and fold this project into that)
 * Better compatibility (Windows, OS X, even distros other than CentOS may need some work)
 * Ability to run simulator on a server and interact via web client (including VGA, OpenOCD, GDB interfaces) and/or compile to WebASM - no need for server
+* Programmable RTC
+* Interrupt controller
 
 ## TODO
 
@@ -77,6 +85,7 @@ And in yet another terminal, attach to the other end with your terminal emulator
 * Fix hard coded paths to boot.bin, test.bin in main.cpp
 * Document peripheral interfaces (MMIO address layout, etc)
 * Better document dependencies (provide `yum install ...packages...` and `apt install ...packages...`, tips for installing SystemC, Verilator, RISC-V tools)
+* Provide an option for the OpenOCD/JTAG VPI connection initiation to be non-blocking so sims can proceed without having to attach OpenOCD each time (maybe spawn a thread)
 * Many more... `grep TODO . -R`
 
 ## LICENSE

@@ -74,6 +74,7 @@ uint8_t* magic_memory::get_or_create_address(uint32_t address) {
 // NOTE: only raw binary format supported - no elf, hex, etc
 void magic_memory::load_memory(std::string memory_file, uint32_t address) {
     ifstream file(memory_file);
+    sc_assert(file.is_open());
     while (!file.eof()) {
 
         //don't go past end of page boundary

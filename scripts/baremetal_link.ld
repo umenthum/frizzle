@@ -3,9 +3,9 @@ ENTRY(_start)
 
 SECTIONS
 {
-    . = 0x80001000;
+    . = 0x80000000;
     .text : {
-        *(.text._start);
+        *(.text._entry);
         *(.text);
     }
     .data : { *(.data) }

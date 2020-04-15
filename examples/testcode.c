@@ -20,6 +20,8 @@
  * SOFTWARE.
 */
 
+#include "entry.h"
+
 #define N 80
 #define K 37 //K < N/2
 

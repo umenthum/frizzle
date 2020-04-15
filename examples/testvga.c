@@ -20,17 +20,17 @@
  * SOFTWARE.
 */
 
+//#define NO_WFI
+#include "entry.h"
+
 #include <stdint.h>
 #include "../vga/vga_common.h"
 
 void draw_test_pattern();
 void draw_puskar();
 
-//void __attribute__((section("entry"))) _start() {
 void _start() {
-    asm ("ebreak");
     draw_test_pattern();
-    asm ("ebreak");
     draw_puskar();
     draw_test_pattern();
 }

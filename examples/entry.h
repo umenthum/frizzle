@@ -20,44 +20,40 @@
  * SOFTWARE.
 */
 
-#include "entry.h"
+#ifndef _ENTRY_H
+#define _ENTRY_H
 
-#include <stdint.h>
-#include "../vga/vga_common.h"
+//default stack start, can be overridden
+#ifndef STACK_START
+ #define STACK_START 0x80200000
+#endif // STACK_START
 
-void handler() __attribute__((interrupt("machine")));
-volatile uint8_t (*text_array)[text_rows][2 * text_cols] = (uint8_t (*)[text_rows][2 * text_cols]) text_base;
-volatile uint8_t *uart_in = ((uint8_t*) 0x10008);
-volatile uint8_t *uart_out = ((uint8_t*) 0x1000C);
+#define __STACK_START_HELPER(x) #x
+#define __STACK_START(x) __STACK_START_HELPER(x)
 
-void _start() {
-    asm(
-        "csrw mtvec, %0\n\t"
-        "csrrsi x0, mstatus, 0x8"
-      :
-      : "r" (handler)
-    );
-    *uart_out = 0x4C;
-    *uart_out = 0x6C;
-    *uart_out = 0x5C;
-    *uart_out = 0x7C;
-    *uart_out = 0x0D;
-    *uart_out = 0x0A;
-}
-
-void handler() {
-    /*
-    uint32_t cause;
+void __attribute__((naked)) _entry() {
     asm volatile (
-        "csrr %0, mcause"
-      : "=r" (cause)
-    );
-    */
-    static int i;
-    uint8_t in_byte = *uart_in;
-    (*text_array)[0][2*i] = in_byte;
-    (*text_array)[0][2*i+1] = 0x2;
-    *uart_out = in_byte + 1;
-    i++;
+
+#ifdef ENTRY_BREAK
+        "ebreak\n\t"
+#endif
+
+        "li sp, " __STACK_START(STACK_START) "\n\t"
+        "call _start\n\t"
+
+#ifdef EXIT_BREAK
+        "ebreak\n\t"
+#endif
+
+#ifdef NO_WFI
+"%=:     j %=b"
+#else
+"%=:     wfi\n\t"
+        "j %=b"
+#endif
+
+    ::"r"(0));
 }
+
+#endif // _ENTRY_H
 

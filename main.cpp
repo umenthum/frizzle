@@ -57,15 +57,14 @@ int sc_main(int argc, char* argv[]) {
     uart_wrapper uart("uart");
     magic_school_bus bus("bus", 2, 4);
 
-    memory->load_memory("boot.bin", 0x80000000);
-    memory->load_memory("test.bin", 0x80001000);
+    memory->load_memory(bin_name, 0x80000000);
 
     bus.register_initiator(core.initiator_socket);
     bus.register_initiator(debugger.dmm_socket);
-    bus.register_target(debugger.dms_socket, 0x100, 0xF00);
-    bus.register_target(memory.target_socket, 0x80000000, 0x80000000);
-    bus.register_target(vga.target_socket, 0xA0000, 0x20000);
     bus.register_target(uart.target_socket, 0x10000, 16);
+    bus.register_target(memory.target_socket, 0x80000000, 0x80000000);
+    bus.register_target(debugger.dms_socket, 0x100, 0xF00);
+    bus.register_target(vga.target_socket, 0xA0000, 0x20000);
 
     sc_clock clk("clk", 2, SC_NS);//, 0.5, 0.0, SC_NS);
     core.clk_i(clk);
