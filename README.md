@@ -27,6 +27,7 @@ The sim will wait for an OpenOCD debugger to attach, so in another terminal:
 To attach GDB (`(gdb) ` represents the GDB prompt)
 
 `riscv64-unknown-elf-gdb a.out`
+
 `(gdb) target remote localhost:3333`
 
 To advance past a breakpoint in the test code (`asm ("ebreak");`)
@@ -48,35 +49,43 @@ And in yet another terminal, attach to the other end with your terminal emulator
 ## Prerequisites
 
 * A RISC-V core! Frizzle was developed around a RISC-V core derived from the UIUC ECE411 course staff's solution to MP1 so I don't feel comfortable sharing it. Ideally the core should support handling debug and UART interrupt requests as well as a handful of related CSRs. You will likely need to modify core/core_tlm.h and core/core_tlm.cpp to work with your core.
-* Verilator
-* SystemC (need environment variables SYSTEMC_LIBDIR, SYSTEMC_INCLUDE, maybe also SYSTEMC)
-* RISC-V OpenOCD
-* RISC-V GNU tools (GCC, objcopy, objdump, GDB)
-* gtkmm-3.0, probably some other packages (sorry I haven't tried running on a blank system to know exactly what is needed)
+* [Verilator](https://www.veripool.org/projects/verilator/wiki/Installing)
+  * Recommend installing from source
+* [SystemC](https://github.com/accellera-official/systemc)
+  * Verilator needs to see environment variables SYSTEMC_LIBDIR, SYSTEMC_INCLUDE, maybe also SYSTEMC
+  * Also LD_LIBRARY_PATH needs to include $SYSTEMC_LIBDIR
+  * In my experience, both Verilator and SystemC need to be compiled with `CXXFLAGS='-std=c++11'` to work together
+* [RISC-V GNU toolchain](https://github.com/riscv/riscv-gnu-toolchain) (GCC, objcopy, objdump, GDB, need to set RISCV environment variable)
+* [RISC-V OpenOCD](https://github.com/riscv/riscv-openocd)
+  * configure with `--enable-jtag-vpi`
+* Centos: gtkmm-3.0, Ubuntu: libgtkmm-3.0-dev
 * You will need to add the following to $OPENOCD_ROOT/tcl/interface/jtag_vpi.cfg (device ID can be configured in debugger/top.sv):
 
 `jtag newtap riscv cpu -irlen 5 -expected-id 0xA0ECE411`
+
 `target create riscv.cpu riscv -chain-position riscv.cpu`
+
 `riscv.cpu configure -work-area-phys 0x80000000 -work-area-size 10000 -work-area-backup 1`
 
 
 ## Feature Wishlist
 
-* Ethernet MAC connected via MII to virtual PHY, connects to host via TAP. Use lwip as the IP stack
+* Ethernet MAC connected via MII to virtual PHY, connects to host via TAP. Use lwip or smoltcp as the IP stack
 * Some sort of storage/block device/virtual SPI flash
-* DRAM delay model (dramsim2)
+* DRAM delay model (dramsim2), maybe some simplified version of the SDRAM bus for educational purposes
 * Virtual USB
 * RISC-V proxy kernel support
 * RVFI monitor, shadow memory (checks cache read correctness)
 * RISC-V compliance tests
 * SystemC core instead of Verilog (easier prototyping of advanced functionality like virtual memory, also "golden model" without giving students an RTL solution)
-* Plug-and-play support for popular open source cores (serv, rocketchip, picorv32, vexriscv, minerva, ibex)
+* Plug-and-play support for popular open source cores (serv, rocketchip, picorv32, vexriscv, minerva, ibex, ariane)
 * Examples of using non-traditional HDLs with Frizzle (chisel, migen, bluespec)
 * Some sort of integration or interoperability with FuseSoC and/or Litex (imagine this might just be "add SystemC/TLM mode to Litex" and fold this project into that)
 * Better compatibility (Windows, OS X, even distros other than CentOS may need some work)
 * Ability to run simulator on a server and interact via web client (including VGA, OpenOCD, GDB interfaces) and/or compile to WebASM - no need for server
 * Programmable RTC
 * Interrupt controller
+* Demonstrate interaction with GEM5 via TLM
 
 ## TODO
 

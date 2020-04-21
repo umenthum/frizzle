@@ -33,6 +33,6 @@ LIBS="$PWD/uart_obj_dir/Vwbuart__ALL.a $PWD/core_obj_dir/Vcore__ALL.a $PWD/jtag_
 INCLUDE="-I$PWD/core_obj_dir -I$PWD/jtag_obj_dir -I$PWD/uart_obj_dir -I$PWD/bus -I$PWD/vga -I$PWD/debugger -I$PWD/core -I$PWD/uart $(pkg-config gtkmm-3.0 --cflags)"
 LIBS="$LIBS $(pkg-config gtkmm-3.0 --libs)"
 
-verilator --exe -sc frizzle.sv $VERILATOR_FLAGS -CFLAGS "$OPT -std=gnu++11 -fPIC $INCLUDE" -LDFLAGS "$LIBS" $SOURCES
+verilator --exe -sc frizzle.sv $VERILATOR_FLAGS -CFLAGS "$OPT -std=gnu++11 -fPIC $INCLUDE" -LDFLAGS "$LIBS -pthread" $SOURCES
 make -j 8 -C obj_dir -f Vfrizzle.mk
 

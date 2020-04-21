@@ -26,7 +26,9 @@
 vga::vga(sc_core::sc_module_name name) :
         sc_module(name), vga_win(text_array, font_data, color_palette), gtkwin_thread(gtk_run, this) {
     //TODO initialize text_array?
-    std::copy(std::begin(default_font_data), std::end(default_font_data), std::begin(font_data));
+    for (int i = 0; i < 256; i++) {
+        std::copy(std::begin(default_font_data[i]), std::end(default_font_data[i]), std::begin(font_data[i]));
+    }
     std::copy(std::begin(default_color_palette), std::end(default_color_palette), std::begin(color_palette));
     for (int i = 0; i < num_colors; i++) {
         sc_assert(color_palette[i] == default_color_palette[i]);
